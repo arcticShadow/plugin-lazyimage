@@ -16,6 +16,12 @@ possible, while still allowing you to handle load errors.
 It returns `Object` with two `start` and `load` keys. The `start` Promise will
 always resolve, use `load` to handle load errors.
 
+To install with jspm:
+
+```
+jspm install lazyimage=github:laurentgoudet/plugin-lazyimage@0.0.2
+```
+
 To lazy load a single image, simply do:
 
 ```
