@@ -5,30 +5,35 @@
 */
 exports.build = false;
 exports.fetch = function(load) {
-  load.metadata.imgPromise = new Promise(function(resolve, reject) {
-    function loadImage() {
-      var img = new Image();
-      img.onload = function(evt) {
-        try {
-          delete img.onload; //release memory - suggested by John Hann
-        } catch(err) {
-          img.onload = function() {}; // IE7 :(
+  load.metadata.start = new Promise(function(startResolve) {
+    load.metadata.load = new Promise(function(loadResolve, loadReject) {
+      function loadImage() {
+        var img = new Image();
+        img.onerror = loadReject;
+        img.onload = function(evt) {
+          try {
+            delete img.onload; //release memory - suggested by John Hann
+          } catch(err) {
+            img.onload = function() {}; // IE7 :(
+          }
+          loadResolve();
         }
+        img.src = load.address;
+        startResolve(img);
+      };
+      if (document.readyState === 'complete') {
+        loadImage();
+      } else {
+        window.addEventListener('load', loadImage, false);
       }
-      img.src = load.address;
-      resolve(img);
-    };
-    if (document.readyState === 'complete') {
-      loadImage();
-    } else {
-      window.addEventListener('load', loadImage, false);
-    }
+    });
   });
   return Promise.resolve('');
 };
 
 exports.instantiate = function(load) {
-  // we don't want to unpack the promise here, as it delay the execution of the
-  // consumer. I couldn't find a better way to not unpack the Promise.
-  return { promise: load.metadata.imgPromise };
+  return {
+    start: load.metadata.start,
+    load: load.metadata.load
+  };
 };
