@@ -3,18 +3,9 @@ plugin-lazyimage
 
 Lazy image preloader plugin. Similar to
 [plugin-image](https://github.com/systemjs/plugin-image), expect:
-- Faster fetch for your other modules: it starts to load the images after the
-Window `load` event, instead of in the same time than your other SystemJS
-modules, giving network priority to them.
-- Non blocking: [plugin-image](https://github.com/systemjs/plugin-image) waits
-for the image, or all the images if you are importing many, imported by a
-module to be loaded before executing the code of that module.
-- Start or load: it exports two `Promises`, one when the download of the image
-starts and one and it ends, allowing you to display an image as soon as
-possible, while still allowing you to handle load errors.
-
-It returns `Object` with two `start` and `load` keys. The `start` Promise will
-always resolve, use `load` to handle load errors.
+- Non blocking: modules using [plugin-image](https://github.com/systemjs/plugin-image) are not executed until the image, or all the images, are loaded. Imports using [plugin-lazyimage](https://github.com/laurentgoudet/plugin-lazyimage) return immediatly.
+- Deferred image loading: images imported through [plugin-image](https://github.com/systemjs/plugin-image) are downloaded immediatly, causing network contention with your other requests (JS, CSS). Images imported through [plugin-lazyimage](https://github.com/laurentgoudet/plugin-lazyimage) are delayed until the the Window `load` event
+- Progressive rendering: [plugin-image](https://github.com/systemjs/plugin-image) does allow to progressively render an image (it only returns when the image is fully loaded). [plugin-lazyimage](https://github.com/laurentgoudet/plugin-lazyimage) returns an `Object` with two `start` and `load` Promises, allowing you to display an image as soon as possible (the `start` Promise always resolves) while still handling load errors.
 
 To install with jspm:
 
@@ -34,6 +25,6 @@ image.start.then((image) => {
 ```
 
 This code will be executed as soon as possible, before the Window `load` event,
-and the `image.promise` will resolve as soon as the image starts
-downloading (i.e., the image will be progressively displayed).
+and the `image.start` Promise will resolve as soon as the image starts
+loading (i.e., the image will be progressively displayed to the user).
 
