@@ -1,4 +1,5 @@
 {
   "name": "plugin-lazyimage",
-  "main": "lazyimage"
+  "main": "lazyimage",
+  "version" : "1.0.0"
 }
